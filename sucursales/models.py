@@ -52,7 +52,3 @@ class DetalleVenta(models.Model):
     
     def __str__(self):
         return f"Detalle de Venta {self.venta.id} - {self.sucursal.nombre}"
-    
-    
-    
-    
