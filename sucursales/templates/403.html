@@ -1,0 +1,9 @@
+{% extends "sucursales/base.html" %}
+{% block title %}Acceso denegado{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>403 · Acceso denegado</h1>
+  <p>Tu perfil no tiene permisos para realizar esta acción.</p>
+  <p><a class="btn" href="{% url 'sucursales:lista' %}">Volver al listado</a></p>
+</div>
+{% endblock %}

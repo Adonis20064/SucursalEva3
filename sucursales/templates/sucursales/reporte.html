@@ -1,0 +1,60 @@
+{% extends "sucursales/base.html" %}
+{% block title %}Reporte {{ rep.numero }}{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="top">
+    <div>
+      <span class="badge">{{ rep.nivel }}</span>
+      <h1 style="margin:.4rem 0 0;">{{ rep.numero }}. {{ rep.titulo }}</h1>
+    </div>
+    <a class="btn sec" href="{% url 'sucursales:reportes' %}">← Reportes</a>
+  </div>
+
+  {% if campos %}
+  <form method="get" action="{% url 'sucursales:reporte' rep.numero %}" novalidate>
+    <div class="filtros">
+      {% for c in campos %}
+      <div>
+        <label for="{{ c.p.name }}">{{ c.p.label }}</label>
+        {% if c.opciones is not None %}
+          <select id="{{ c.p.name }}" name="{{ c.p.name }}" required>
+            <option value="">— Selecciona —</option>
+            {% for valor, texto in c.opciones %}
+              <option value="{{ valor }}" {% if c.valor == valor|stringformat:"s" %}selected{% endif %}>{{ texto }}</option>
+            {% endfor %}
+          </select>
+        {% elif c.p.tipo == "fecha" %}
+          <input type="date" id="{{ c.p.name }}" name="{{ c.p.name }}" value="{{ c.valor }}" required>
+        {% elif c.p.tipo == "anio" %}
+          <input type="number" id="{{ c.p.name }}" name="{{ c.p.name }}" min="2000" max="2100" value="{{ c.valor }}" required>
+        {% else %}
+          <input type="text" inputmode="decimal" id="{{ c.p.name }}" name="{{ c.p.name }}" value="{{ c.valor }}" required>
+        {% endif %}
+        {% if c.error %}<div class="error">{{ c.error }}</div>{% endif %}
+      </div>
+      {% endfor %}
+    </div>
+    {% if error_general %}<div class="error" style="margin-bottom:.8rem;">{{ error_general }}</div>{% endif %}
+    <button class="btn" type="submit">Consultar</button>
+  </form>
+  {% endif %}
+
+  {% if resultado %}
+    {% if resultado.nota %}<p class="muted">{{ resultado.nota }}</p>{% endif %}
+    <div style="overflow-x:auto;margin-top:1rem;">
+    <table>
+      <thead><tr>{% for col in resultado.columns %}<th>{{ col }}</th>{% endfor %}</tr></thead>
+      <tbody>
+      {% for fila in resultado.rows %}
+        <tr>{% for celda in fila %}<td>{{ celda }}</td>{% endfor %}</tr>
+      {% empty %}
+        <tr><td colspan="{{ resultado.columns|length }}" class="muted">Sin resultados para esta consulta.</td></tr>
+      {% endfor %}
+      </tbody>
+    </table>
+    </div>
+  {% elif campos and not enviado %}
+    <p class="muted" style="margin-top:1rem;">Completa los filtros y pulsa «Consultar».</p>
+  {% endif %}
+</div>
+{% endblock %}

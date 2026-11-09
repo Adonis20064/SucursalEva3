@@ -1,0 +1,16 @@
+{% extends "sucursales/base.html" %}
+{% block title %}Reportes{% endblock %}
+{% block content %}
+<div class="card">
+  <h1>Reportes</h1>
+  <p class="muted">20 consultas comerciales resueltas con el ORM de Django.</p>
+  {% for nivel, lista in niveles.items %}
+    <div class="nivel">{{ nivel }}</div>
+    <ul class="rep-list">
+      {% for r in lista %}
+        <li><strong>{{ r.numero }}.</strong> <a href="{% url 'sucursales:reporte' r.numero %}">{{ r.titulo }}</a></li>
+      {% endfor %}
+    </ul>
+  {% endfor %}
+</div>
+{% endblock %}

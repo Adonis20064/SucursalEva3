@@ -1,0 +1,52 @@
+{% extends "sucursales/base.html" %}
+{% block title %}{{ titulo }}{% endblock %}
+{% block content %}
+<div class="card" style="max-width:560px;margin:0 auto;">
+  <h1>{{ titulo }}</h1>
+
+  {% if not categorias %}
+    <div class="msg error">No hay categorías. Crea al menos una en el
+      <a href="/admin/sucursales/categoria/add/">panel de administración</a>.</div>
+  {% endif %}
+
+  <form method="post" novalidate
+        action="{% if objeto %}{% url 'sucursales:editar' objeto.pk %}{% else %}{% url 'sucursales:crear' %}{% endif %}">
+    {% csrf_token %}
+
+    <label for="sku">SKU</label>
+    <input type="text" id="sku" name="sku" maxlength="50" value="{{ datos.sku }}" required>
+    {% if errores.sku %}<div class="error">{{ errores.sku }}</div>{% endif %}
+
+    <label for="nombre">Nombre</label>
+    <input type="text" id="nombre" name="nombre" maxlength="150" value="{{ datos.nombre }}" required>
+    {% if errores.nombre %}<div class="error">{{ errores.nombre }}</div>{% endif %}
+
+    <label for="categoria">Categoría</label>
+    <select id="categoria" name="categoria" required>
+      <option value="">— Selecciona —</option>
+      {% for c in categorias %}
+        <option value="{{ c.pk }}" {% if datos.categoria == c.pk|stringformat:"s" %}selected{% endif %}>{{ c.nombre }}</option>
+      {% endfor %}
+    </select>
+    {% if errores.categoria %}<div class="error">{{ errores.categoria }}</div>{% endif %}
+
+    <label for="precio">Precio</label>
+    <input type="text" inputmode="decimal" id="precio" name="precio" value="{{ datos.precio }}" required>
+    {% if errores.precio %}<div class="error">{{ errores.precio }}</div>{% endif %}
+
+    <label for="stock">Stock</label>
+    <input type="number" id="stock" name="stock" min="0" step="1" value="{{ datos.stock }}" required>
+    {% if errores.stock %}<div class="error">{{ errores.stock }}</div>{% endif %}
+
+    <div class="check">
+      <input type="checkbox" id="activo" name="activo" {% if datos.activo %}checked{% endif %}>
+      <label for="activo">Activo</label>
+    </div>
+
+    <p style="margin-top:1.5rem;display:flex;gap:.5rem;">
+      <button class="btn" type="submit">{{ accion }}</button>
+      <a class="btn sec" href="{% url 'sucursales:lista' %}">Cancelar</a>
+    </p>
+  </form>
+</div>
+{% endblock %}

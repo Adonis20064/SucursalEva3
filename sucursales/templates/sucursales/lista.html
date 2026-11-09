@@ -1,0 +1,46 @@
+{% extends "sucursales/base.html" %}
+{% block title %}Listado{% endblock %}
+{% block content %}
+<div class="card">
+  <div class="top">
+    <h1>Sucursales</h1>
+    <a class="btn" href="{% url 'sucursales:crear' %}">+ Nuevo</a>
+  </div>
+  <div style="overflow-x:auto">
+  <table>
+    <thead>
+      <tr>
+        <th>SKU</th><th>Nombre</th><th>Categoría</th>
+        <th class="num">Precio</th><th class="num">Stock</th><th>Estado</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+    {% for s in sucursales %}
+      <tr>
+        <td>{{ s.sku }}</td>
+        <td>{{ s.nombre }}</td>
+        <td>{{ s.categoria.nombre }}</td>
+        <td class="num">${{ s.precio }}</td>
+        <td class="num">{{ s.stock }}</td>
+        <td><span class="badge">{% if s.activo %}Activo{% else %}Inactivo{% endif %}</span></td>
+        <td>
+          <div class="acciones">
+            <a class="btn sec" href="{% url 'sucursales:editar' s.pk %}">Editar</a>
+            {% if es_admin %}
+            <form method="post" action="{% url 'sucursales:eliminar' s.pk %}"
+                  onsubmit="return confirm('¿Eliminar «{{ s.nombre|escapejs }}»? Esta acción no se puede deshacer.');">
+              {% csrf_token %}
+              <button class="btn danger" type="submit">Eliminar</button>
+            </form>
+            {% endif %}
+          </div>
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="7" class="muted">No hay registros todavía.</td></tr>
+    {% endfor %}
+    </tbody>
+  </table>
+  </div>
+</div>
+{% endblock %}
